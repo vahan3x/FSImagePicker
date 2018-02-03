@@ -34,7 +34,7 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
     imageView.contentMode = UIViewContentModeScaleAspectFill;
     imageView.clipsToBounds = YES;
     [self.contentView addSubview:imageView];
-    [imageView fillSuperview];
+    [imageView fs_fillSuperview];
     self.imageView = imageView;
     UIImage *live = [UIImage imageNamed:FSLivePhotoIndicatorIconName inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
     UIImageView *livePhotoIndicatorImageView = [[UIImageView alloc] initWithImage:live];

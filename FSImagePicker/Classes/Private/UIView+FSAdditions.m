@@ -9,11 +9,11 @@
 
 @implementation UIView (FSAdditions)
 
-- (void)fillSuperview {
-    [self fillSuperviewWithInsets:UIEdgeInsetsZero];
+- (void)fs_fillSuperview {
+    [self fs_fillSuperviewWithInsets:UIEdgeInsetsZero];
 }
 
-- (void)fillSuperviewWithInsets:(UIEdgeInsets)insets {
+- (void)fs_fillSuperviewWithInsets:(UIEdgeInsets)insets {
     if (!self.superview) { return; }
     self.translatesAutoresizingMaskIntoConstraints = NO;
     

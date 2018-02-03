@@ -91,9 +91,9 @@ static const CGFloat Spacing = 3.0;
     [collectionView registerClass:[FSImagePickerCollectionViewCell class] forCellWithReuseIdentifier:FSImagePickerCollectionViewCellReuseID];
     
     [self.view addSubview:dialogContainerView];
-    [dialogContainerView fillSuperview];
+    [dialogContainerView fs_fillSuperview];
     [self.view addSubview:collectionView];
-    [collectionView fillSuperview];
+    [collectionView fs_fillSuperview];
     
     UIBarButtonItem *rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonAction:)];
     self.navigationItem.rightBarButtonItem = rightBarButtonItem;

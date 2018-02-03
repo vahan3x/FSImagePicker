@@ -11,8 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIView (FSAdditions)
 
-- (void)fillSuperview;
-- (void)fillSuperviewWithInsets:(UIEdgeInsets)insets;
+- (void)fs_fillSuperview;
+- (void)fs_fillSuperviewWithInsets:(UIEdgeInsets)insets;
 
 @end
 
