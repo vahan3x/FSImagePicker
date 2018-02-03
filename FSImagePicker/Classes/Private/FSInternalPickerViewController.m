@@ -45,6 +45,8 @@ static const CGFloat Spacing = 3.0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.view.backgroundColor = [UIColor whiteColor];
+    
     self.imageManager = [PHCachingImageManager new];
     self.imageRequestOptions = [PHImageRequestOptions new];
     
@@ -52,11 +54,13 @@ static const CGFloat Spacing = 3.0;
     dialogContainerView.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.3];
     dialogContainerView.alpha = 0.0;
     UIImageView *dialogIconImageView = [[UIImageView alloc] init];
+    dialogIconImageView.tintColor = [UIColor whiteColor];
     dialogIconImageView.contentMode = UIViewContentModeScaleAspectFit;
     UILabel *dialogLabel = [[UILabel alloc] init];
     dialogLabel.font = [UIFont systemFontOfSize:17.0];
     dialogLabel.textColor = [UIColor whiteColor];
     dialogLabel.numberOfLines = 0;
+    dialogLabel.textAlignment = NSTextAlignmentCenter;
     
     [dialogContainerView addSubview:dialogIconImageView];
     [dialogContainerView addSubview:dialogLabel];
@@ -68,6 +72,7 @@ static const CGFloat Spacing = 3.0;
                                               [dialogIconImageView.heightAnchor constraintEqualToAnchor:dialogContainerView.widthAnchor multiplier:0.6],
                                               
                                               [dialogLabel.topAnchor constraintEqualToAnchor:dialogIconImageView.bottomAnchor constant:8.0],
+                                              [dialogLabel.centerXAnchor constraintEqualToAnchor:dialogIconImageView.centerXAnchor],
                                               [NSLayoutConstraint constraintWithItem:dialogLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:dialogContainerView attribute:NSLayoutAttributeWidth multiplier:1.0 constant:-16.0],
                                               [NSLayoutConstraint constraintWithItem:dialogLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationLessThanOrEqual toItem:dialogContainerView attribute:NSLayoutAttributeBottomMargin multiplier:1.0 constant:-8.0]
                                               ]];
