@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'FSImagePicker'
-  s.version          = '0.1.3'
+  s.version          = '0.1.4'
   s.summary          = 'A customizable image picker with multiselection support.'
   s.description      = <<-DESC
 FSImagePickerViewController is an image picker supporting multiselection and simple customizations.
@@ -26,5 +26,5 @@ FSImagePickerViewController is an image picker supporting multiselection and sim
 
   s.public_header_files = 'FSImagePicker/Classes/Public/**/*.h'
   s.private_header_files = 'FSImagePicker/Classes/Private/**/*.h'
-  s.frameworks = 'Foundation', 'UIKit', 'Photos'
+  s.frameworks = 'Foundation', 'UIKit', 'Photos', 'PhotosUI', 'AVFoundation'
 end
