@@ -20,7 +20,7 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
 static const NSUInteger NumberOfColumns = 4;
 static const CGFloat Spacing = 3.0;
 
-@interface FSInternalPickerViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
+@interface FSInternalPickerViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, PHPhotoLibraryChangeObserver>
 
 @property (nonatomic, weak) UICollectionView *collectionView;
 @property (nonatomic, weak) UIView *dialogContainerView;
@@ -31,6 +31,7 @@ static const CGFloat Spacing = 3.0;
 @property (nonatomic) PHCachingImageManager *imageManager;
 @property (nonatomic) PHImageRequestOptions *imageRequestOptions;
 @property (nonatomic) PHFetchResult<PHAsset *> *assets;
+@property (nonatomic) dispatch_queue_t changeObservingQueue;
 
 @property (nonatomic) FSImagePickerViewController *navigationController;
 
@@ -40,6 +41,12 @@ static const CGFloat Spacing = 3.0;
 
 @dynamic navigationController;
 
+#pragma mark - Initialization
+
+- (void)dealloc {
+    [[PHPhotoLibrary sharedPhotoLibrary] unregisterChangeObserver:self];
+}
+
 #pragma mark - Lifecycle
 
 - (void)viewDidLoad {
@@ -47,6 +54,9 @@ static const CGFloat Spacing = 3.0;
     
     self.view.backgroundColor = [UIColor whiteColor];
     
+    NSString *changeQueueID = [([NSBundle bundleForClass:[self class]].bundleIdentifier ?: @"unknown") stringByAppendingString:@".ImagePicker.PhotosObserving"];
+    dispatch_queue_attr_t changeQueueAttr = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_DEFAULT, QOS_MIN_RELATIVE_PRIORITY);
+    self.changeObservingQueue = dispatch_queue_create(changeQueueID.UTF8String, changeQueueAttr);
     self.imageManager = [PHCachingImageManager new];
     self.imageRequestOptions = [PHImageRequestOptions new];
     
@@ -107,6 +117,7 @@ static const CGFloat Spacing = 3.0;
     
     if ([PHPhotoLibrary authorizationStatus] == PHAuthorizationStatusAuthorized) {
         [self fetchAllAssets];
+        [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
     }
 }
 
@@ -118,11 +129,12 @@ static const CGFloat Spacing = 3.0;
         [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
             if (status == PHAuthorizationStatusAuthorized) {
                 __strong typeof(self) sself = welf;
+                if (!sself) { return; }
                 [sself fetchAllAssets];
+                [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:sself];
             }
             dispatch_async(dispatch_get_main_queue(), ^{
-                __strong typeof(self) sself = welf;
-                [sself.collectionView reloadData];
+                [welf.collectionView reloadData];
             });
         }];
     }
@@ -272,6 +284,78 @@ static const CGFloat Spacing = 3.0;
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     CGFloat side = (collectionView.bounds.size.width - collectionView.contentInset.left - collectionView.contentInset.right - (NumberOfColumns - 1) * Spacing) / NumberOfColumns;
     return CGSizeMake(side, side);
+}
+
+#pragma mark - PHPhotoLibraryChangeObserver
+
+- (void)photoLibraryDidChange:(PHChange *)changeInstance {
+    PHFetchResultChangeDetails *details = [changeInstance changeDetailsForFetchResult:self.assets];
+    if (!details) { return; }
+    
+    __weak typeof(self) welf = self;
+    dispatch_async(self.changeObservingQueue, ^{
+        __strong typeof(welf) sself = welf;
+        if (!sself) { return; }
+        
+        sself.assets = details.fetchResultAfterChanges;
+        if (!details.hasIncrementalChanges) {
+            [sself.collectionView reloadData];
+            return;
+        }
+        
+        NSIndexSet *removedIndices = details.removedIndexes;
+        NSIndexSet *insertedIndices = details.insertedIndexes;
+        NSIndexSet *changedIndices = details.changedIndexes;
+        
+        NSMutableArray<NSIndexPath *> *removedIndexPaths = [NSMutableArray arrayWithCapacity:removedIndices.count];
+        if (removedIndices) {
+            [removedIndices enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+                [removedIndexPaths addObject:[NSIndexPath indexPathForItem:idx inSection:0]];
+            }];
+        }
+        NSMutableArray *insertedIndexPaths = [NSMutableArray arrayWithCapacity:insertedIndices.count];
+        if (insertedIndices) {
+            [insertedIndices enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+                [insertedIndexPaths addObject:[NSIndexPath indexPathForItem:idx inSection:0]];
+            }];
+        }
+        NSMutableArray *changedIndexPaths = [NSMutableArray arrayWithCapacity:changedIndices.count];
+        if (changedIndices) {
+            [changedIndices enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+                [changedIndexPaths addObject:[NSIndexPath indexPathForItem:idx inSection:0]];
+            }];
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [welf.collectionView performBatchUpdates:^{
+                if (removedIndexPaths.count) {
+                    [welf.collectionView deleteItemsAtIndexPaths:removedIndexPaths];
+                }
+                if (insertedIndexPaths.count) {
+                    [welf.collectionView insertItemsAtIndexPaths:insertedIndexPaths];
+                }
+            } completion:^(BOOL finished) {
+                if (!finished) {
+                    [welf.collectionView reloadData];
+                    return;
+                }
+                
+                if (changedIndexPaths.count) {
+                    [welf.collectionView reloadItemsAtIndexPaths:changedIndexPaths];
+                }
+                
+                if ([details hasMoves]) {
+                    [welf.collectionView performBatchUpdates:^{
+                        [details enumerateMovesWithBlock:^(NSUInteger fromIndex, NSUInteger toIndex) {
+                            NSIndexPath *fromIndexPath = [NSIndexPath indexPathForItem:fromIndex inSection:0];
+                            NSIndexPath *toIndexPath = [NSIndexPath indexPathForItem:toIndex inSection:0];
+                            [welf.collectionView moveItemAtIndexPath:fromIndexPath toIndexPath:toIndexPath];
+                        }];
+                    } completion:nil];
+                }
+            }];
+        });
+    });
 }
 
 @end
