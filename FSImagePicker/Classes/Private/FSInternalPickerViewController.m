@@ -10,6 +10,7 @@
 #import <Photos/Photos.h>
 #import "UIView+FSAdditions.h"
 #import "FSImagePickerCollectionViewCell.h"
+#import "FSImagePickerPreviewingViewController.h"
 
 FSImagePickerInfo const FSImagePickerInfoCancelled = @"FSImagePickerInfoKeyCancelled";
 FSImagePickerInfo const FSImagePickerInfoPickedItems = @"FSImagePickerInfoKeyPickedItems";
@@ -20,7 +21,7 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
 static const NSUInteger NumberOfColumns = 4;
 static const CGFloat Spacing = 3.0;
 
-@interface FSInternalPickerViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, PHPhotoLibraryChangeObserver>
+@interface FSInternalPickerViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, PHPhotoLibraryChangeObserver, UIViewControllerPreviewingDelegate>
 
 @property (nonatomic, weak) UICollectionView *collectionView;
 @property (nonatomic, weak) UIView *dialogContainerView;
@@ -32,6 +33,8 @@ static const CGFloat Spacing = 3.0;
 @property (nonatomic) PHImageRequestOptions *imageRequestOptions;
 @property (nonatomic) PHFetchResult<PHAsset *> *assets;
 @property (nonatomic) dispatch_queue_t changeObservingQueue;
+
+@property (nonatomic) id<UIViewControllerPreviewing> vcPreviewing;
 
 @property (nonatomic) FSImagePickerViewController *navigationController;
 
@@ -115,6 +118,8 @@ static const CGFloat Spacing = 3.0;
     self.collectionView = collectionView;
     self.rightBarButtonItem = rightBarButtonItem;
     
+    [self setupForceTouch];
+    
     if ([PHPhotoLibrary authorizationStatus] == PHAuthorizationStatusAuthorized) {
         [self fetchAllAssets];
         [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:self];
@@ -137,6 +142,18 @@ static const CGFloat Spacing = 3.0;
                 [welf.collectionView reloadData];
             });
         }];
+    }
+}
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    [super traitCollectionDidChange:previousTraitCollection];
+    if ([self.traitCollection respondsToSelector:@selector(forceTouchCapability)]) {
+        if (self.traitCollection.forceTouchCapability != UIForceTouchCapabilityAvailable && self.vcPreviewing) {
+            [self unregisterForPreviewingWithContext:self.vcPreviewing];
+            self.vcPreviewing = nil;
+        } else {
+            [self setupForceTouch];
+        }
     }
 }
 
@@ -183,6 +200,16 @@ static const CGFloat Spacing = 3.0;
     
     fetchOptions.predicate = [NSPredicate predicateWithFormat:predicateString, PHAssetMediaTypeImage, PHAssetMediaSubtypePhotoLive, PHAssetMediaTypeVideo];
     self.assets = [PHAsset fetchAssetsWithOptions:fetchOptions];
+}
+
+- (void)setupForceTouch {
+    self.vcPreviewing = nil;
+    
+    if ([self.traitCollection respondsToSelector:@selector(forceTouchCapability)]) {
+        if (self.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable) {
+            self.vcPreviewing = [self registerForPreviewingWithDelegate:self sourceView:self.collectionView];
+        }
+    }
 }
 
 #pragma mark - Actions
@@ -284,6 +311,36 @@ static const CGFloat Spacing = 3.0;
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     CGFloat side = (collectionView.bounds.size.width - collectionView.contentInset.left - collectionView.contentInset.right - (NumberOfColumns - 1) * Spacing) / NumberOfColumns;
     return CGSizeMake(side, side);
+}
+
+#pragma mark - UIViewControllerPreviewingDelegate
+
+- (UIViewController *)previewingContext:(id<UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location {
+    NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:location];
+    if (!indexPath) { return nil; }
+    
+    FSImagePickerCollectionViewCell *cell = (FSImagePickerCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:indexPath];
+    previewingContext.sourceRect = cell.frame;
+    
+    FSImagePickerPreviewingViewController *previewingVC = [[FSImagePickerPreviewingViewController alloc] init];
+    [previewingVC setAsset:self.assets[indexPath.item] withPreviewImage:cell.image];
+    
+    return previewingVC;
+}
+
+- (void)previewingContext:(id<UIViewControllerPreviewing>)previewingContext commitViewController:(FSImagePickerPreviewingViewController *)viewControllerToCommit {
+    PHAsset *asset = viewControllerToCommit.asset;
+    if (!asset) { return; }
+    NSUInteger idx = [self.assets indexOfObject:asset];
+    if (idx == NSNotFound) { return; }
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:idx inSection:0];
+    
+    if ([self.collectionView.indexPathsForSelectedItems containsObject:indexPath]) {
+        [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+    } else {
+        [self.collectionView selectItemAtIndexPath:indexPath animated:YES scrollPosition:UICollectionViewScrollPositionNone];
+    }
 }
 
 #pragma mark - PHPhotoLibraryChangeObserver
