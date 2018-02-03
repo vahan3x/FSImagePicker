@@ -39,6 +39,8 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
     UIImage *live = [UIImage imageNamed:FSLivePhotoIndicatorIconName inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
     UIImageView *livePhotoIndicatorImageView = [[UIImageView alloc] initWithImage:live];
     livePhotoIndicatorImageView.contentMode = UIViewContentModeScaleAspectFit;
+    livePhotoIndicatorImageView.tintColor = [UIColor whiteColor];
+    livePhotoIndicatorImageView.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.3];
     [self.contentView addSubview:livePhotoIndicatorImageView];
     self.livePhotoIndicatorImageView = livePhotoIndicatorImageView;
     
@@ -47,6 +49,7 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
     videoDurationLabel.font = [UIFont systemFontOfSize:11.0];
     videoDurationLabel.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.3];
     videoDurationLabel.textColor = [UIColor whiteColor];
+    videoDurationLabel.layer.cornerRadius = 2.0;
     [self.contentView addSubview:videoDurationLabel];
     self.videoDurationLabel = videoDurationLabel;
     
@@ -59,9 +62,9 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
                                               [self.contentView.bottomAnchor constraintEqualToAnchor:livePhotoIndicatorImageView.bottomAnchor
                                                                                             constant:8.0],
                                               [livePhotoIndicatorImageView.heightAnchor constraintEqualToAnchor:self.contentView.heightAnchor
-                                                                                                     multiplier:0.1],
+                                                                                                     multiplier:0.2],
                                               [livePhotoIndicatorImageView.widthAnchor constraintEqualToAnchor:self.contentView.widthAnchor
-                                                                                                    multiplier:0.1],
+                                                                                                    multiplier:0.2],
                                               
                                               [self.contentView.rightAnchor constraintEqualToAnchor:videoDurationLabel.rightAnchor
                                                                                            constant:8.0],
@@ -86,6 +89,11 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
     
     self.image = [UIImage imageNamed:FSThumbnailIconName inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
     self.duration = 0.0;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.livePhotoIndicatorImageView.layer.cornerRadius = self.livePhotoIndicatorImageView.layer.bounds.size.width / 2.0;
 }
 
 #pragma mark - Properties

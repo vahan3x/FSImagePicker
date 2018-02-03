@@ -82,6 +82,7 @@ static const CGFloat Spacing = 3.0;
     collectionView.dataSource = self;
     collectionView.delegate = self;
     collectionView.allowsMultipleSelection = YES;
+    collectionView.alwaysBounceVertical = YES;
     [collectionView registerClass:[FSImagePickerCollectionViewCell class] forCellWithReuseIdentifier:FSImagePickerCollectionViewCellReuseID];
     
     [self.view addSubview:dialogContainerView];
