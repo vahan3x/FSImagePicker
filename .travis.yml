@@ -1,0 +1,12 @@
+osx_image: xcode9.2
+language: objective-c
+cache: cocoapods
+podfile: Example/Podfile
+before_install:
+- npm install ios-sim -g
+- ios-sim start --devicetypeid "com.apple.CoreSimulator.SimDeviceType.iPhone-7, 11.2"
+- gem install cocoapods
+- pod install --project-directory=Example
+script:
+- set -o pipefail && xcodebuild test -workspace Example/FSImagePicker.xcworkspace -scheme FSImagePicker-Example -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO -destination 'platform=iOS Simulator,name=iPhone X,OS=latest' | xcpretty
+- pod lib lint

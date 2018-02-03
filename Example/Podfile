@@ -1,0 +1,12 @@
+platform :ios, '10.0'
+use_frameworks!
+
+target 'FSImagePicker_Example' do
+  pod 'FSImagePicker', :path => '../'
+
+  target 'FSImagePicker_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
