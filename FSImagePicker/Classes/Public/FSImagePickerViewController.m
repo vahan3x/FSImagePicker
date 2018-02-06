@@ -31,6 +31,7 @@
     if (self = [super initWithRootViewController:picker]) {
         self.fs_rootViewController = picker;
         self.mediaType = FSImagePickerMediaTypesPhoto;
+        self.selectionColor = self.navigationBar.tintColor;
         [self.navigationBar addObserver:self forKeyPath:@"barTintColor" options:NSKeyValueObservingOptionNew context:nil];
     }
     
@@ -54,6 +55,11 @@
 
 - (FSImagePickerMediaTypes)mediaType {
     return self.fs_rootViewController.mediaType;
+}
+
+- (void)setSelectionColor:(UIColor *)selectionColor {
+    _selectionColor = selectionColor;
+    [self.fs_rootViewController updateVisibleItems];
 }
 
 #pragma mark - Key-Value Observing

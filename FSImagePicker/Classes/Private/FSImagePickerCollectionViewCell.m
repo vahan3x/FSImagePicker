@@ -15,6 +15,8 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
 
 @interface FSImagePickerCollectionViewCell ()
 
+@property (nonatomic, weak) UIView *containerView;
+
 @property (nonatomic, weak) UIImageView *imageView;
 
 @property (nonatomic, weak) UIImageView *livePhotoIndicatorImageView;
@@ -30,10 +32,16 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
     self = [super initWithFrame:frame];
     if (!self) { return nil; }
     
+    UIView *containerView = [[UIView alloc] initWithFrame:self.contentView.bounds];
+    containerView.backgroundColor = [UIColor clearColor];
+    [self.contentView addSubview:containerView];
+    [containerView fs_fillSuperview];
+    self.containerView = containerView;
+    
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:frame];
     imageView.contentMode = UIViewContentModeScaleAspectFill;
     imageView.clipsToBounds = YES;
-    [self.contentView addSubview:imageView];
+    [self.containerView addSubview:imageView];
     [imageView fs_fillSuperview];
     self.imageView = imageView;
     UIImage *live = [UIImage imageNamed:FSLivePhotoIndicatorIconName inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
@@ -41,7 +49,7 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
     livePhotoIndicatorImageView.contentMode = UIViewContentModeScaleAspectFit;
     livePhotoIndicatorImageView.tintColor = [UIColor whiteColor];
     livePhotoIndicatorImageView.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.3];
-    [self.contentView addSubview:livePhotoIndicatorImageView];
+    [self.containerView addSubview:livePhotoIndicatorImageView];
     self.livePhotoIndicatorImageView = livePhotoIndicatorImageView;
     
     UILabel *videoDurationLabel = [[UILabel alloc] init];
@@ -50,29 +58,29 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
     videoDurationLabel.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.3];
     videoDurationLabel.textColor = [UIColor whiteColor];
     videoDurationLabel.layer.cornerRadius = 2.0;
-    [self.contentView addSubview:videoDurationLabel];
+    [self.containerView addSubview:videoDurationLabel];
     self.videoDurationLabel = videoDurationLabel;
     
     livePhotoIndicatorImageView.translatesAutoresizingMaskIntoConstraints = NO;
     videoDurationLabel.translatesAutoresizingMaskIntoConstraints = NO;
     
     [NSLayoutConstraint activateConstraints:@[
-                                              [self.contentView.rightAnchor constraintEqualToAnchor:livePhotoIndicatorImageView.rightAnchor
+                                              [self.containerView.rightAnchor constraintEqualToAnchor:livePhotoIndicatorImageView.rightAnchor
                                                                                            constant:8.0],
-                                              [self.contentView.bottomAnchor constraintEqualToAnchor:livePhotoIndicatorImageView.bottomAnchor
+                                              [self.containerView.bottomAnchor constraintEqualToAnchor:livePhotoIndicatorImageView.bottomAnchor
                                                                                             constant:8.0],
-                                              [livePhotoIndicatorImageView.heightAnchor constraintEqualToAnchor:self.contentView.heightAnchor
+                                              [livePhotoIndicatorImageView.heightAnchor constraintEqualToAnchor:self.containerView.heightAnchor
                                                                                                      multiplier:0.2],
-                                              [livePhotoIndicatorImageView.widthAnchor constraintEqualToAnchor:self.contentView.widthAnchor
+                                              [livePhotoIndicatorImageView.widthAnchor constraintEqualToAnchor:self.containerView.widthAnchor
                                                                                                     multiplier:0.2],
                                               
-                                              [self.contentView.rightAnchor constraintEqualToAnchor:videoDurationLabel.rightAnchor
+                                              [self.containerView.rightAnchor constraintEqualToAnchor:videoDurationLabel.rightAnchor
                                                                                            constant:8.0],
-                                              [self.contentView.bottomAnchor constraintEqualToAnchor:videoDurationLabel.bottomAnchor
+                                              [self.containerView.bottomAnchor constraintEqualToAnchor:videoDurationLabel.bottomAnchor
                                                                                             constant:8.0],
                                               [NSLayoutConstraint constraintWithItem:videoDurationLabel attribute:NSLayoutAttributeLeft
                                                                            relatedBy:NSLayoutRelationGreaterThanOrEqual
-                                                                              toItem:self.contentView attribute:NSLayoutAttributeLeft
+                                                                              toItem:self.containerView attribute:NSLayoutAttributeLeft
                                                                           multiplier:1.0 constant:0.0]
                                               ]];
     
@@ -102,12 +110,12 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
     if (selected && !self.selected) {
         [UIView animateWithDuration:0.7 delay:0.0 usingSpringWithDamping:0.7 initialSpringVelocity:1.0
                             options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState) animations:^{
-                                self.contentView.transform = CGAffineTransformScale(self.contentView.transform, 0.95, 0.95);
+                                self.containerView.transform = CGAffineTransformScale(self.containerView.transform, 0.95, 0.95);
                             } completion:nil];
     } else if (!selected && [self isSelected]) {
         [UIView animateWithDuration:0.7 delay:0.0 usingSpringWithDamping:0.7 initialSpringVelocity:1.0
                             options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionBeginFromCurrentState) animations:^{
-                                self.contentView.transform = CGAffineTransformIdentity;
+                                self.containerView.transform = CGAffineTransformIdentity;
                             } completion:nil];
     }
     

@@ -51,6 +51,11 @@ NS_SWIFT_NAME(ImagePickerViewController)
 @property (nonatomic, nullable, weak) id<FSImagePickerDelegate, UINavigationControllerDelegate> delegate;
 
 /**
+ A color to highlight the selected items.
+ */
+@property (nonatomic) UIColor *selectionColor;
+
+/**
  Creates an `FSImagePickerViewController` instance with default values.
 
  @return Newly instanciated `FSImagePickerViewController` object.

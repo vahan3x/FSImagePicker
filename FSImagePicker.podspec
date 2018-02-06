@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'FSImagePicker'
-  s.version          = '0.1.5'
+  s.version          = '0.1.6'
   s.summary          = 'A customizable image picker with multiselection support.'
   s.description      = <<-DESC
 FSImagePickerViewController is an image picker supporting multiselection and simple customizations.

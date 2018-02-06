@@ -214,6 +214,10 @@ static const CGFloat Spacing = 3.0;
     }
 }
 
+- (void)updateVisibleItems {
+    [self.collectionView reloadItemsAtIndexPaths:self.collectionView.indexPathsForVisibleItems];
+}
+
 #pragma mark - Actions
 
 - (void)leftBarButtonAction:(UIBarButtonItem *)sender {
@@ -284,6 +288,7 @@ static const CGFloat Spacing = 3.0;
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     FSImagePickerCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:FSImagePickerCollectionViewCellReuseID forIndexPath:indexPath];
+    cell.selectedBackgroundView.backgroundColor = self.navigationController.selectionColor;
     
     PHAsset *asset = self.assets[indexPath.item];
     if (asset.mediaType == PHAssetMediaTypeVideo) {

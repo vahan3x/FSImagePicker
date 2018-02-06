@@ -14,4 +14,6 @@
 @property (nonatomic) FSImagePickerMediaTypes mediaType;
 @property (nonatomic, nullable, weak) id<FSImagePickerDelegate> delegate;
 
+- (void)updateVisibleItems;
+
 @end
