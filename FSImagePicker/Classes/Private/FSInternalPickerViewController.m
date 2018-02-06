@@ -322,7 +322,7 @@ static const CGFloat Spacing = 3.0;
     self.rightBarButtonItem.title = @"Done";
     self.rightBarButtonItem.style = UIBarButtonItemStyleDone;
     
-    self.navigationItem.leftBarButtonItem.title = @"Deselect All";
+    self.navigationItem.leftBarButtonItem.title = @"Deselect";
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
