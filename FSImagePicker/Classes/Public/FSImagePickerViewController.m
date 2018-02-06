@@ -72,10 +72,4 @@
     }
 }
 
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [super touchesBegan:touches withEvent:event];
-    
-    self.navigationBar.barTintColor = self.navigationBar.barTintColor ? [UIColor whiteColor] : [UIColor blackColor];
-}
-
 @end
