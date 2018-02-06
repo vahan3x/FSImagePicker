@@ -13,7 +13,6 @@
 @interface FSImagePickerViewController ()
 
 @property (nonatomic) FSInternalPickerViewController *fs_rootViewController;
-@property (nonatomic) UIStatusBarStyle fs_currentStatusBarStyle;
 
 @end
 
@@ -32,7 +31,6 @@
     if (self = [super initWithRootViewController:picker]) {
         self.fs_rootViewController = picker;
         self.mediaType = FSImagePickerMediaTypesPhoto;
-        self.fs_currentStatusBarStyle = UIStatusBarStyleDefault;
         [self.navigationBar addObserver:self forKeyPath:@"barTintColor" options:NSKeyValueObservingOptionNew context:nil];
     }
     
@@ -44,10 +42,6 @@
 }
 
 #pragma mark - Properties
-
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return self.fs_currentStatusBarStyle;
-}
 
 - (void)setDelegate:(id<FSImagePickerDelegate, UINavigationControllerDelegate>)delegate {
     self.fs_rootViewController.delegate = delegate;
@@ -71,18 +65,17 @@
         if ([newValue isEqual:[NSNull null]]) {
             isLightBar = self.navigationBar.barStyle == UIBarStyleDefault;
         } else {
-            isLightBar = [newValue fs_isLightColor];
-        }
-        if (isLightBar && self.fs_currentStatusBarStyle == UIStatusBarStyleLightContent) {
-            self.fs_currentStatusBarStyle = UIStatusBarStyleDefault;
-            [self setNeedsStatusBarAppearanceUpdate];
-        } else if (!isLightBar && self.fs_currentStatusBarStyle == UIStatusBarStyleDefault) {
-            self.fs_currentStatusBarStyle = UIStatusBarStyleLightContent;
-            [self setNeedsStatusBarAppearanceUpdate];
+            self.navigationBar.barStyle = [newValue fs_isLightColor] ? UIBarStyleDefault : UIBarStyleBlack;
         }
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+    
+    self.navigationBar.barTintColor = self.navigationBar.barTintColor ? [UIColor whiteColor] : [UIColor blackColor];
 }
 
 @end

@@ -65,7 +65,7 @@
 		80AFAAF4EC2AA53852134B16 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AAEE1DCF003BFB494882CBAD /* Pods_FSImagePicker_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FSImagePicker_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D46DB9A7CEF7DCC7BE2DE6AC /* FSImagePicker.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = FSImagePicker.podspec; path = ../FSImagePicker.podspec; sourceTree = "<group>"; };
+		D46DB9A7CEF7DCC7BE2DE6AC /* FSImagePicker.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = FSImagePicker.podspec; path = ../FSImagePicker.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		F08DAEF80519D4EDEC7A47BC /* Pods-FSImagePicker_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FSImagePicker_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FSImagePicker_Tests/Pods-FSImagePicker_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 

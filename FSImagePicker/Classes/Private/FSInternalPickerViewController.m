@@ -110,7 +110,9 @@ static const CGFloat Spacing = 3.0;
     
     UIBarButtonItem *rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonAction:)];
     self.navigationItem.rightBarButtonItem = rightBarButtonItem;
-    self.navigationItem.title = @"Picker";
+    UIBarButtonItem *leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Select All" style:UIBarButtonItemStylePlain target:self action:@selector(leftBarButtonAction:)];
+    self.navigationItem.leftBarButtonItem = leftBarButtonItem;
+    self.navigationItem.title = @"Camera Roll";
     
     self.dialogContainerView = dialogContainerView;
     self.dialogIconImageView = dialogIconImageView;
@@ -214,6 +216,21 @@ static const CGFloat Spacing = 3.0;
 
 #pragma mark - Actions
 
+- (void)leftBarButtonAction:(UIBarButtonItem *)sender {
+    if (self.collectionView.indexPathsForSelectedItems.count) {
+        for (NSIndexPath *indexPath in self.collectionView.indexPathsForSelectedItems) {
+            [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+            [self collectionView:self.collectionView didDeselectItemAtIndexPath:indexPath];
+        }
+    } else {
+        for (NSUInteger i = 0; i < self.assets.count; ++i) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i inSection:0];
+            [self.collectionView selectItemAtIndexPath:indexPath animated:YES scrollPosition:UICollectionViewScrollPositionNone];
+            [self collectionView:self.collectionView didSelectItemAtIndexPath:indexPath];
+        }
+    }
+}
+
 - (void)rightBarButtonAction:(UIBarButtonItem *)sender {
     __weak typeof(self) welf = self;
     [self dismissViewControllerAnimated:YES completion:^{
@@ -258,7 +275,9 @@ static const CGFloat Spacing = 3.0;
                 NSLog(@"Strange behaviour in %s at %d.", __PRETTY_FUNCTION__, __LINE__);
                 break;
         }
+        self.navigationItem.leftBarButtonItem.enabled = NO;
     }
+    self.navigationItem.leftBarButtonItem.enabled = YES;
     
     return self.assets.count;
 }
@@ -297,12 +316,16 @@ static const CGFloat Spacing = 3.0;
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     self.rightBarButtonItem.title = @"Done";
     self.rightBarButtonItem.style = UIBarButtonItemStyleDone;
+    
+    self.navigationItem.leftBarButtonItem.title = @"Deselect All";
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
     if (!collectionView.indexPathsForSelectedItems.count) {
         self.rightBarButtonItem.title = @"Cancel";
         self.rightBarButtonItem.style = UIBarButtonItemStylePlain;
+        
+        self.navigationItem.leftBarButtonItem.title = @"Select All";
     }
 }
 
