@@ -96,7 +96,7 @@ static const CGFloat Spacing = 3.0;
     flowLayout.minimumLineSpacing = Spacing;
     flowLayout.minimumInteritemSpacing = Spacing;
     UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout];
-    collectionView.backgroundColor = [UIColor whiteColor];
+    collectionView.backgroundColor = self.backgroundColor;
     collectionView.contentInset = UIEdgeInsetsMake(Spacing, Spacing, Spacing, Spacing);
     collectionView.dataSource = self;
     collectionView.delegate = self;
@@ -136,7 +136,7 @@ static const CGFloat Spacing = 3.0;
         __weak typeof(self) welf = self;
         [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
             if (status == PHAuthorizationStatusAuthorized) {
-                __strong typeof(self) sself = welf;
+                __strong typeof(welf) sself = welf;
                 if (!sself) { return; }
                 [sself fetchAllAssets];
                 [[PHPhotoLibrary sharedPhotoLibrary] registerChangeObserver:sself];
@@ -222,17 +222,15 @@ static const CGFloat Spacing = 3.0;
 #pragma mark - Properties
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
-    self.collectionView.backgroundColor = backgroundColor;
-}
-
-- (UIColor *)backgroundColor {
-    return self.collectionView.backgroundColor;
+    self.collectionView.backgroundColor = _backgroundColor = backgroundColor;
 }
 
 - (void)setMediaType:(FSImagePickerMediaTypes)mediaType {
     if (mediaType != _mediaType) {
         _mediaType = mediaType;
-        [self fetchAllAssets];
+        if ([self isViewLoaded] && [PHPhotoLibrary authorizationStatus] == PHAuthorizationStatusAuthorized) {
+            [self fetchAllAssets];
+        }
         [self.collectionView reloadData];
     }
 }
