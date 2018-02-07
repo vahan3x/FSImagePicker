@@ -299,8 +299,9 @@ static const CGFloat Spacing = 3.0;
                 break;
         }
         self.navigationItem.leftBarButtonItem.enabled = NO;
+    } else {
+        self.navigationItem.leftBarButtonItem.enabled = YES;
     }
-    self.navigationItem.leftBarButtonItem.enabled = YES;
     
     return self.assets.count;
 }
