@@ -9,11 +9,16 @@
 
 #import "FSImagePickerViewController.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface FSInternalPickerViewController : UIViewController
 
 @property (nonatomic) FSImagePickerMediaTypes mediaType;
 @property (nonatomic, nullable, weak) id<FSImagePickerDelegate> delegate;
+@property (nonatomic, nullable) UIColor *backgroundColor;
 
 - (void)updateVisibleItems;
 
 @end
+
+NS_ASSUME_NONNULL_END

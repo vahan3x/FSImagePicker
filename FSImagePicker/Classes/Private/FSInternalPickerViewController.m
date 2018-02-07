@@ -219,6 +219,24 @@ static const CGFloat Spacing = 3.0;
     [self.collectionView reloadItemsAtIndexPaths:self.collectionView.indexPathsForVisibleItems];
 }
 
+#pragma mark - Properties
+
+- (void)setBackgroundColor:(UIColor *)backgroundColor {
+    self.collectionView.backgroundColor = backgroundColor;
+}
+
+- (UIColor *)backgroundColor {
+    return self.collectionView.backgroundColor;
+}
+
+- (void)setMediaType:(FSImagePickerMediaTypes)mediaType {
+    if (mediaType != _mediaType) {
+        _mediaType = mediaType;
+        [self fetchAllAssets];
+        [self.collectionView reloadData];
+    }
+}
+
 #pragma mark - Actions
 
 - (void)leftBarButtonAction:(UIBarButtonItem *)sender {

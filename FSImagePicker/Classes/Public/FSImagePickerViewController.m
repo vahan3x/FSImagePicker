@@ -62,6 +62,14 @@
     [self.fs_rootViewController updateVisibleItems];
 }
 
+- (void)setBackgroundColor:(UIColor *)backgroundColor {
+    self.fs_rootViewController.backgroundColor = backgroundColor;
+}
+
+- (UIColor *)backgroundColor {
+    return self.fs_rootViewController.backgroundColor;
+}
+
 #pragma mark - Key-Value Observing
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {

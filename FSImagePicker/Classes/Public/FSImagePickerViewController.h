@@ -56,6 +56,11 @@ NS_SWIFT_NAME(ImagePickerViewController)
 @property (nonatomic) UIColor *selectionColor;
 
 /**
+ The picker's background color.
+ */
+@property (nonatomic, nullable) UIColor *backgroundColor;
+
+/**
  Creates an `FSImagePickerViewController` instance with default values.
 
  @return Newly instanciated `FSImagePickerViewController` object.
