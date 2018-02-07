@@ -8,9 +8,9 @@
 #import "FSImagePickerCollectionViewCell.h"
 
 #import "UIView+FSAdditions.h"
+#import <PhotosUI/PhotosUI.h>
 
-static NSString *const FSLivePhotoIndicatorIconName = @"LivePhoto";
-static NSString *const FSTSelectionIconName = @"Selection";
+static NSString *const FSIconsBundleName = @"Icons";
 static NSString *const FSThumbnailIconName = @"Thumbnail";
 
 @interface FSImagePickerCollectionViewCell ()
@@ -44,11 +44,9 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
     [self.containerView addSubview:imageView];
     [imageView fs_fillSuperview];
     self.imageView = imageView;
-    UIImage *live = [UIImage imageNamed:FSLivePhotoIndicatorIconName inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
+    UIImage *live = [PHLivePhotoView livePhotoBadgeImageWithOptions:PHLivePhotoBadgeOptionsOverContent];
     UIImageView *livePhotoIndicatorImageView = [[UIImageView alloc] initWithImage:live];
     livePhotoIndicatorImageView.contentMode = UIViewContentModeScaleAspectFit;
-    livePhotoIndicatorImageView.tintColor = [UIColor whiteColor];
-    livePhotoIndicatorImageView.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.3];
     [self.containerView addSubview:livePhotoIndicatorImageView];
     self.livePhotoIndicatorImageView = livePhotoIndicatorImageView;
     
@@ -95,13 +93,10 @@ static NSString *const FSThumbnailIconName = @"Thumbnail";
 - (void)prepareForReuse {
     [super prepareForReuse];
     
-    self.image = [UIImage imageNamed:FSThumbnailIconName inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
+    NSURL *iconsBundleURL = [[NSBundle bundleForClass:[self class]] URLForResource:FSIconsBundleName withExtension:@"bundle"];
+    NSBundle *iconsBundle = [NSBundle bundleWithURL:iconsBundleURL];
+    self.image = [UIImage imageNamed:FSThumbnailIconName inBundle:iconsBundle compatibleWithTraitCollection:nil];
     self.duration = 0.0;
-}
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    self.livePhotoIndicatorImageView.layer.cornerRadius = self.livePhotoIndicatorImageView.layer.bounds.size.width / 2.0;
 }
 
 #pragma mark - Properties

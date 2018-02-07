@@ -16,6 +16,7 @@ FSImagePickerInfo const FSImagePickerInfoCancelled = @"FSImagePickerInfoKeyCance
 FSImagePickerInfo const FSImagePickerInfoPickedItems = @"FSImagePickerInfoKeyPickedItems";
 
 static NSString *const FSImagePickerCollectionViewCellReuseID = @"FSImagePickerCollectionViewCellReuseIdentifier";
+static NSString *const FSIconsBundleName = @"Icons";
 static NSString *const FSThumbnailIconName = @"Thumbnail";
 
 static const NSUInteger NumberOfColumns = 4;
@@ -264,7 +265,9 @@ static const CGFloat Spacing = 3.0;
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     if (!self.assets.count) {
         PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
-        UIImage *placeholder = [UIImage imageNamed:FSThumbnailIconName inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
+        NSURL *iconsBundleURL = [[NSBundle bundleForClass:[self class]] URLForResource:FSIconsBundleName withExtension:@"bundle"];
+        NSBundle *iconsBundle = [NSBundle bundleWithURL:iconsBundleURL];
+        UIImage *placeholder = [UIImage imageNamed:FSThumbnailIconName inBundle:iconsBundle compatibleWithTraitCollection:nil];
         switch (status) {
             case PHAuthorizationStatusAuthorized:
                 [self showDialogWithMessage:@"It looks like you have not saved any media yet." icon:placeholder animated:YES];

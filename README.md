@@ -24,8 +24,6 @@ Vahan Babayan, vahan3x@gmail.com
 
 ## Attributions
 
-[LivePhoto](https://thenounproject.com/icon/639884/) icon by [Viktor Ostrovsky](https://thenounproject.com/vostrovsky) is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)  
-[Selection](https://thenounproject.com/icon/220696/) icon by [Anjully Lozano](https://thenounproject.com/anjullylozano) is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)  
 [Thumbnail](https://thenounproject.com/icon/235715/) icon by [Saeed Farrahi](https://thenounproject.com/saeedfarrahi) is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
 
 ## License
