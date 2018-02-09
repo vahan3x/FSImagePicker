@@ -104,10 +104,10 @@ static const CGFloat Spacing = 3.0;
     collectionView.alwaysBounceVertical = YES;
     [collectionView registerClass:[FSImagePickerCollectionViewCell class] forCellWithReuseIdentifier:FSImagePickerCollectionViewCellReuseID];
     
-    [self.view addSubview:dialogContainerView];
-    [dialogContainerView fs_fillSuperview];
     [self.view addSubview:collectionView];
     [collectionView fs_fillSuperview];
+    [self.view addSubview:dialogContainerView];
+    [dialogContainerView fs_fillSuperview];
     
     UIBarButtonItem *rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(rightBarButtonAction:)];
     self.navigationItem.rightBarButtonItem = rightBarButtonItem;
